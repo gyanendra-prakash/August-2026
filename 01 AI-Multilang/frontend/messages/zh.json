@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "blog": "博客"
+  },
+  "home": {
+    "title": "欢迎访问我们的AI网站",
+    "subtitle": "用您的语言与我们的AI助手聊天",
+    "cta_button": "开始聊天"
+  },
+  "about": {
+    "title": "关于我们",
+    "description": "我们打造能说您语言的AI驱动网站。我们的使命是让技术随时随地为每个人所用。",
+    "mission_label": "我们的使命",
+    "team_label": "我们的团队"
+  },
+  "contact": {
+    "title": "联系我们",
+    "description": "有问题吗？给我们发消息，我们会尽快回复您。",
+    "name_label": "您的姓名",
+    "email_label": "电子邮件地址",
+    "message_label": "您的消息",
+    "submit_button": "发送消息"
+  },
+  "chatbot": {
+    "placeholder": "输入您的消息...",
+    "send": "发送",
+    "thinking": "AI正在思考..."
+  },
+  "footer": {
+    "copyright": "版权所有",
+    "tagline": "用AI打造，服务所有人"
+  },
+  "blog": {
+    "latest_heading": "博客文章",
+    "read_more": "阅读文章",
+    "empty_message": "暂无文章。请从管理面板发布一篇。",
+    "translated_label": "支持8种语言",
+    "back_link": "返回所有文章"
+  }
+}

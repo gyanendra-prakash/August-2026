@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "about": "Über Uns",
+    "contact": "Kontakt",
+    "blog": "Blog"
+  },
+  "home": {
+    "title": "Willkommen auf unserer KI-Website",
+    "subtitle": "Chatten Sie mit unserem KI-Assistenten in Ihrer Sprache",
+    "cta_button": "Chat Starten"
+  },
+  "about": {
+    "title": "Über Uns",
+    "description": "Wir bauen KI-gestützte Websites, die Ihre Sprache sprechen. Unsere Mission ist es, Technologie für alle zugänglich zu machen, überall.",
+    "mission_label": "Unsere Mission",
+    "team_label": "Unser Team"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie Uns",
+    "description": "Haben Sie eine Frage? Senden Sie uns eine Nachricht und wir melden uns bald bei Ihnen.",
+    "name_label": "Ihr Name",
+    "email_label": "E-Mail-Adresse",
+    "message_label": "Ihre Nachricht",
+    "submit_button": "Nachricht Senden"
+  },
+  "chatbot": {
+    "placeholder": "Nachricht eingeben...",
+    "send": "Senden",
+    "thinking": "KI denkt nach..."
+  },
+  "footer": {
+    "copyright": "Alle Rechte vorbehalten",
+    "tagline": "Mit KI gebaut, für alle"
+  },
+  "blog": {
+    "latest_heading": "Aus dem Blog",
+    "read_more": "Beitrag lesen",
+    "empty_message": "Noch keine Beiträge. Veröffentlichen Sie einen über das Admin-Panel.",
+    "translated_label": "Verfügbar in 8 Sprachen",
+    "back_link": "Zurück zu allen Beiträgen"
+  }
+}

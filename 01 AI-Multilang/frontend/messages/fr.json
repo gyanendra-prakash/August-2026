@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À Propos",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "home": {
+    "title": "Bienvenue sur notre site Web IA",
+    "subtitle": "Discutez avec notre assistant IA dans votre langue",
+    "cta_button": "Commencer à Discuter"
+  },
+  "about": {
+    "title": "À Propos de Nous",
+    "description": "Nous créons des sites web alimentés par l'IA qui parlent votre langue. Notre mission est de rendre la technologie accessible à tous, partout.",
+    "mission_label": "Notre Mission",
+    "team_label": "Notre Équipe"
+  },
+  "contact": {
+    "title": "Contactez-Nous",
+    "description": "Une question ? Envoyez-nous un message et nous vous répondrons rapidement.",
+    "name_label": "Votre Nom",
+    "email_label": "Adresse E-mail",
+    "message_label": "Votre Message",
+    "submit_button": "Envoyer le Message"
+  },
+  "chatbot": {
+    "placeholder": "Tapez votre message...",
+    "send": "Envoyer",
+    "thinking": "L'IA réfléchit..."
+  },
+  "footer": {
+    "copyright": "Tous droits réservés",
+    "tagline": "Construit avec l'IA, pour tous"
+  },
+  "blog": {
+    "latest_heading": "Depuis le blog",
+    "read_more": "Lire l'article",
+    "empty_message": "Pas encore d'articles. Publiez-en un depuis le panneau d'administration.",
+    "translated_label": "Disponible en 8 langues",
+    "back_link": "Retour à tous les articles"
+  }
+}

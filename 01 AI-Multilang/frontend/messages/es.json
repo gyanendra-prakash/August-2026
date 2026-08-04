@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Sobre Nosotros",
+    "contact": "Contacto",
+    "blog": "Blog"
+  },
+  "home": {
+    "title": "Bienvenido a nuestro sitio web de IA",
+    "subtitle": "Chatea con nuestro asistente de IA en tu idioma",
+    "cta_button": "Comenzar a Chatear"
+  },
+  "about": {
+    "title": "Sobre Nosotros",
+    "description": "Creamos sitios web impulsados por IA que hablan tu idioma. Nuestra misión es hacer que la tecnología sea accesible para todos, en todas partes.",
+    "mission_label": "Nuestra Misión",
+    "team_label": "Nuestro Equipo"
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "description": "¿Tienes una pregunta? Envíanos un mensaje y te responderemos pronto.",
+    "name_label": "Tu Nombre",
+    "email_label": "Correo Electrónico",
+    "message_label": "Tu Mensaje",
+    "submit_button": "Enviar Mensaje"
+  },
+  "chatbot": {
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar",
+    "thinking": "La IA está pensando..."
+  },
+  "footer": {
+    "copyright": "Todos los derechos reservados",
+    "tagline": "Creado con IA, para todos"
+  },
+  "blog": {
+    "latest_heading": "Del blog",
+    "read_more": "Leer publicación",
+    "empty_message": "Aún no hay publicaciones. Publica una desde el panel de administración.",
+    "translated_label": "Disponible en 8 idiomas",
+    "back_link": "Volver a todas las publicaciones"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "about": "会社概要",
+    "contact": "お問い合わせ",
+    "blog": "ブログ"
+  },
+  "home": {
+    "title": "AIウェブサイトへようこそ",
+    "subtitle": "あなたの言語でAIアシスタントとチャットしましょう",
+    "cta_button": "チャットを始める"
+  },
+  "about": {
+    "title": "私たちについて",
+    "description": "私たちはあなたの言語を話すAI搭載ウェブサイトを構築しています。私たちの使命は、どこでも誰にでも技術をアクセス可能にすることです。",
+    "mission_label": "私たちの使命",
+    "team_label": "私たちのチーム"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "description": "ご質問がありますか？メッセージを送ってください。すぐにご返信いたします。",
+    "name_label": "お名前",
+    "email_label": "メールアドレス",
+    "message_label": "メッセージ",
+    "submit_button": "メッセージを送る"
+  },
+  "chatbot": {
+    "placeholder": "メッセージを入力してください...",
+    "send": "送信",
+    "thinking": "AIが考えています..."
+  },
+  "footer": {
+    "copyright": "全著作権所有",
+    "tagline": "AIで作られた、みんなのために"
+  },
+  "blog": {
+    "latest_heading": "ブログから",
+    "read_more": "記事を読む",
+    "empty_message": "まだ投稿がありません。管理パネルから公開してください。",
+    "translated_label": "8言語で利用可能",
+    "back_link": "すべての投稿に戻る"
+  }
+}

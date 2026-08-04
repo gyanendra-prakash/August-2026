@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "home": {
+    "title": "Welcome to our AI Website",
+    "subtitle": "Chat with our AI assistant in your language",
+    "cta_button": "Start Chatting"
+  },
+  "about": {
+    "title": "About Us",
+    "description": "We build AI-powered websites that speak your language. Our mission is to make technology accessible to everyone, everywhere.",
+    "mission_label": "Our Mission",
+    "team_label": "Our Team"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "description": "Have a question? Send us a message and we'll get back to you soon.",
+    "name_label": "Your Name",
+    "email_label": "Email Address",
+    "message_label": "Your Message",
+    "submit_button": "Send Message"
+  },
+  "chatbot": {
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "thinking": "AI is thinking..."
+  },
+  "footer": {
+    "copyright": "All rights reserved",
+    "tagline": "Built with AI, for everyone"
+  },
+  "blog": {
+    "latest_heading": "From the blog",
+    "read_more": "Read post",
+    "empty_message": "No posts yet. Publish one from the admin panel.",
+    "translated_label": "Available in 8 languages",
+    "back_link": "Back to all posts"
+  }
+}
