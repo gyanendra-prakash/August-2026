@@ -1,0 +1,12 @@
+# Sirf MongoDB chahiye to: docker compose up -d
+services:
+  mongo:
+    image: mongo:7
+    container_name: mappls-demo-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
