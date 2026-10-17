@@ -54,6 +54,7 @@ mappls-mern-demo/
 cp backend/.env.example backend/.env
 # backend/.env kholo aur MAPPLS_KEY=... daalo
 ```
+`your_mappls_static_key_here` ko apni asli Static Key se replace karo; example value sirf placeholder hai.
 (`frontend/.env` dev mein zaroori nahi.)
 
 ### 3. MongoDB
@@ -94,7 +95,9 @@ Alag-alag chalane ho to: `cd backend && npm run dev` aur `cd frontend && npm run
 - **Endpoint URLs:** Web SDK script, Autosuggest aur Reverse Geocode ke URLs Mappls docs se confirm kiye gaye hain. **Geocode, Nearby aur Route ke URLs maine live test nahi kiye** (mere paas Mappls key nahi thi). Agar inme `401/404` aaye to Mappls Console/Docs se sahi URL dekhkar `backend/.env` mein `MAPPLS_GEOCODE_URL`, `MAPPLS_NEARBY_URL`, `MAPPLS_ROUTE_URL` override kar do; code badalne ki zaroorat nahi.
 - **Free plan limits:** Mappls ke plans mein daily/hourly hit limits hoti hain; 403 aaye to limit check karo.
 - **Troubleshooting**
-  - "Mappls key missing" -> `backend/.env` mein `MAPPLS_KEY` set karke backend restart karo.
+  - "Mappls key missing" -> `backend/.env` mein apni asli `MAPPLS_KEY` set karke backend restart karo. `/api/health` ka `mapplsKeyConfigured: true` sirf non-empty key batata hai, key valid hone ki guarantee nahi.
+  - Search boxes mein "Mappls ne access deny kiya (`invalid_token`)" -> `backend/.env` mein copied sample/demo value ki jagah Mappls Console ki valid Static/REST API key daalo; confirm karo ki backend isi folder ki `.env` load karta hai, phir backend restart karo. Key ko chat, logs, ya screenshots mein share mat karo.
+  - Search boxes mein access denied aur Route panel ke **Start/Destination** fields -> ye Autosuggest API call hai, route request nahi. Console mein Search/Autosuggest access bhi enable hona chahiye. Route permission alag se **Get route** dabane par use hoti hai.
   - Map blank / SDK load error -> key sahi hai? domain whitelist hai? Maps SDK enable hai?
   - "Backend se connect nahi hua" -> backend chal raha hai? port 5000 free hai?
   - "MongoDB connected nahi hai" -> `docker compose up -d` ya local mongod start karo.

@@ -124,10 +124,11 @@ export default function MapView({ config, selected, origin, destination, route, 
   if (!config?.mapKey) {
     return (
       <div className="map-message">
-        <h2>Mappls key missing</h2>
+        <h2>Mappls credentials problem</h2>
         <p>
-          <code>backend/.env</code> mein <code>MAPPLS_KEY</code> set karo aur backend restart karo.
+          <code>backend/.env</code> mein <code>MAPPLS_CLIENT_ID</code> + <code>MAPPLS_CLIENT_SECRET</code> (ya <code>MAPPLS_KEY</code>) set karke backend restart karo.
         </p>
+        {config?.authError && <p className="hint error">{config.authError}</p>}
       </div>
     );
   }

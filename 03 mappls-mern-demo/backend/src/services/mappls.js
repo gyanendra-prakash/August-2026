@@ -4,30 +4,67 @@ import { HttpError } from '../errors.js';
 
 const PROFILES = ['driving', 'biking', 'walking', 'trucking'];
 
+function redactCredentials(message, credentials) {
+  return credentials.filter(Boolean).reduce((safeMessage, credential) => safeMessage.replaceAll(credential, '[redacted]'), message);
+}
+
 const toNum = (v) => {
   if (v === null || v === undefined || v === '') return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
 };
 
-function requireKey() {
-  if (!config.mappls.key) {
-    throw new HttpError(500, 'MAPPLS_KEY set nahi hai. backend/.env mein apni Mappls static key daalo.');
+let cachedToken = null;
+
+export async function getAccessToken({ forceRefresh = false } = {}) {
+  const { key, clientId, clientSecret, urls } = config.mappls;
+
+  if (clientId && clientSecret) {
+    if (!forceRefresh && cachedToken && cachedToken.expiresAt > Date.now() + 60_000) {
+      return { mode: 'oauth', token: cachedToken.token };
+    }
+    let res;
+    try {
+      res = await fetch(urls.token, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+        body: new URLSearchParams({ grant_type: 'client_credentials', client_id: clientId, client_secret: clientSecret }),
+        signal: AbortSignal.timeout(15000),
+      });
+    } catch (e) {
+      throw new HttpError(502, `Mappls token server tak request nahi pahunchi (${e.name})`);
+    }
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data?.access_token) {
+      const reason = typeof data?.error === 'string' ? data.error : `HTTP ${res.status}`;
+      const safeReason = redactCredentials(reason, [clientId, clientSecret]);
+      throw new HttpError(401, `Mappls OAuth token nahi mila (${safeReason}). MAPPLS_CLIENT_ID / MAPPLS_CLIENT_SECRET check karo.`);
+    }
+    cachedToken = { token: data.access_token, expiresAt: Date.now() + (Number(data.expires_in) || 3600) * 1000 };
+    return { mode: 'oauth', token: cachedToken.token };
   }
+
+  if (key) return { mode: 'static', token: key };
+  throw new HttpError(500, 'Mappls credentials set nahi hain. backend/.env mein MAPPLS_KEY ya MAPPLS_CLIENT_ID + MAPPLS_CLIENT_SECRET daalo.');
 }
 
-/** GET a Mappls REST endpoint with the static key as `access_token`. */
-async function getJson(url, params = {}) {
-  requireKey();
+/** GET a Mappls REST endpoint with OAuth Bearer auth or the static-key fallback. */
+async function getJson(url, params = {}, retried = false) {
+  const auth = await getAccessToken({ forceRefresh: retried });
   const u = new URL(url);
   for (const [k, v] of Object.entries(params)) {
     if (v !== undefined && v !== null && v !== '') u.searchParams.set(k, String(v));
   }
-  u.searchParams.set('access_token', config.mappls.key);
+  const headers = { Accept: 'application/json' };
+  if (auth.mode === 'oauth') {
+    headers.Authorization = `Bearer ${auth.token}`;
+  } else {
+    u.searchParams.set('access_token', auth.token);
+  }
 
   let res;
   try {
-    res = await fetch(u, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15000) });
+    res = await fetch(u, { headers, signal: AbortSignal.timeout(15000) });
   } catch (e) {
     // Never include `u` here: it contains the key.
     throw new HttpError(502, `Mappls tak request nahi pahunchi (${e.name})`);
@@ -44,9 +81,16 @@ async function getJson(url, params = {}) {
 
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
+      if (auth.mode === 'oauth' && !retried) return getJson(url, params, true);
+      const reason = [data?.error, data?.error_description, data?.message]
+        .find((value) => typeof value === 'string' && value.trim());
+      const safeReason = reason
+        ? redactCredentials(reason, [auth.token, config.mappls.key, config.mappls.clientId, config.mappls.clientSecret])
+        : null;
+      const hint = auth.mode === 'static' ? ' Client ID + Client Secret use karo.' : '';
       throw new HttpError(
         res.status,
-        'Mappls ne access deny kiya. Key sahi hai? Console mein ye API enable hai? IP/domain whitelist check karo.'
+        `Mappls ne access deny kiya${safeReason ? ` (${safeReason})` : ''}.${hint}`
       );
     }
     throw new HttpError(502, `Mappls API error (HTTP ${res.status})`);

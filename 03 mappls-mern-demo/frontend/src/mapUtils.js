@@ -11,10 +11,10 @@ export function loadMapplsSdk(key) {
 
   sdkPromise = new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = `https://sdk.mappls.com/map/sdk/web?v=3.0&access_token=${encodeURIComponent(key)}`;
+    s.src = `https://apis.mappls.com/advancedmaps/api/${encodeURIComponent(key)}/map_sdk?v=3.0&layer=vector`;
     s.async = true;
     s.onload = () => (getMappls() ? resolve(getMappls()) : reject(new Error('SDK load hua par `mappls` global nahi mila')));
-    s.onerror = () => reject(new Error('Mappls SDK load nahi hua. Key aur domain whitelist check karo.'));
+    s.onerror = () => reject(new Error('Mappls SDK script load nahi hua. Static key, Maps SDK (Web) access, aur allowed domain check karo.'));
     document.head.appendChild(s);
   }).catch((e) => {
     sdkPromise = null; // retry allowed

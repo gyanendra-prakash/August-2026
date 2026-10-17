@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { config } from './src/config.js';
 import { errorMiddleware } from './src/errors.js';
+import { getAccessToken } from './src/services/mappls.js';
 import mapplsRoutes from './src/routes/mappls.js';
 import placesRoutes from './src/routes/places.js';
 
@@ -12,21 +13,33 @@ app.use(cors({ origin: config.clientOrigin.split(',').map((s) => s.trim()) }));
 app.use(express.json({ limit: '100kb' }));
 
 app.get('/api/health', (req, res) => {
+  const { key, clientId, clientSecret } = config.mappls;
+  const mapplsAuth = clientId && clientSecret ? 'oauth' : key ? 'static-key' : 'not-configured';
   res.json({
     ok: true,
     mongo: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    mapplsKeyConfigured: Boolean(config.mappls.key),
+    mapplsAuth,
   });
 });
 
-// Frontend yahin se map key + default view leta hai.
-// NOTE: Mappls Web SDK static key browser mein jaati hai (by design) -> Console mein domain whitelist zaroor lagao.
-app.get('/api/config', (req, res) => {
-  res.json({
-    mapKey: config.mappls.key,
-    defaultCenter: config.defaultCenter,
-    defaultZoom: config.defaultZoom,
-  });
+// Frontend yahin se Mappls access token + default view leta hai.
+app.get('/api/config', async (req, res) => {
+  try {
+    const { token } = await getAccessToken();
+    res.json({
+      mapKey: token,
+      authError: '',
+      defaultCenter: config.defaultCenter,
+      defaultZoom: config.defaultZoom,
+    });
+  } catch (e) {
+    res.json({
+      mapKey: '',
+      authError: e.message,
+      defaultCenter: config.defaultCenter,
+      defaultZoom: config.defaultZoom,
+    });
+  }
 });
 
 app.use('/api/mappls', mapplsRoutes);
@@ -47,6 +60,8 @@ async function connectDb() {
 
 app.listen(config.port, () => {
   console.log(`Backend running on http://localhost:${config.port}`);
-  if (!config.mappls.key) console.warn('MAPPLS_KEY set nahi hai -> backend/.env mein daalo.');
+  getAccessToken()
+    .then(({ mode }) => console.log(`Mappls auth OK (${mode})`))
+    .catch((e) => console.warn(`Mappls auth problem: ${e.message}`));
   connectDb();
 });
