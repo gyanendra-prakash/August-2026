@@ -3,7 +3,7 @@ export default function PlacesList({ places, error, onSelect, onDelete }) {
     <section className="panel">
       <h3>Saved places (MongoDB)</h3>
       {error && <div className="hint error">{error}</div>}
-      {!error && places.length === 0 && <div className="hint">Abhi koi place save nahi hui. Search karke "Save" dabao.</div>}
+      {!error && places.length === 0 && <div className="hint">No places saved yet. Search for a place and click "Save".</div>}
       <ul className="list">
         {places.map((p) => (
           <li key={p._id}>

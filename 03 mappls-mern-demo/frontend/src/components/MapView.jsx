@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { addMarker, addPolyline, loadMapplsSdk, onMapEvent, removeLayer } from '../mapUtils.js';
 
+const MAP_ID = 'mappls-map';
 const COLORS = { selected: '#e11d48', origin: '#16a34a', destination: '#dc2626', saved: '#7c3aed', nearby: '#0891b2' };
 
 export default function MapView({ config, selected, origin, destination, route, places, nearby, focus, onMapClick }) {
   const elRef = useRef(null);
   const mapRef = useRef(null);
   const clickRef = useRef(onMapClick);
-  clickRef.current = onMapClick; // map listener sirf ek baar lagta hai; latest handler ref se milta hai
+  clickRef.current = onMapClick; // the map listener is attached only once; the latest handler is read from the ref
 
   const layers = useRef({ selected: null, origin: null, destination: null, route: null, saved: [], nearby: [] });
   const [ready, setReady] = useState(false);
@@ -21,9 +22,12 @@ export default function MapView({ config, selected, origin, destination, route, 
     loadMapplsSdk(config.mapKey)
       .then((mappls) => {
         if (cancelled || mapRef.current) return;
-        const map = new mappls.Map(elRef.current, {
+        // The Mappls v3 Map constructor needs the container id (string), not the element
+        const map = new mappls.Map(MAP_ID, {
           center: config.defaultCenter,
           zoom: config.defaultZoom,
+          zoomControl: true,
+          location: false,
         });
         mapRef.current = map;
 
@@ -31,10 +35,11 @@ export default function MapView({ config, selected, origin, destination, route, 
         const start = () => {
           if (started) return;
           started = true;
+          try { map.resize?.(); } catch { /* ignore */ }
           setReady(true);
         };
         onMapEvent(map, 'load', start);
-        setTimeout(start, 2500); // agar 'load' event na aaye to bhi aage badho
+        setTimeout(start, 2500); // continue even if the 'load' event never fires
 
         onMapEvent(map, 'click', (e) => {
           const ll = e?.lngLat || e?.latlng || e?.latLng;
@@ -48,6 +53,15 @@ export default function MapView({ config, selected, origin, destination, route, 
 
     return () => {
       cancelled = true;
+      const map = mapRef.current;
+      mapRef.current = null;
+      layers.current = { selected: null, origin: null, destination: null, route: null, saved: [], nearby: [] };
+      setReady(false);
+      try {
+        map?.remove?.();
+      } catch {
+        /* ignore */
+      }
     };
   }, [config?.mapKey]);
 
@@ -126,7 +140,7 @@ export default function MapView({ config, selected, origin, destination, route, 
       <div className="map-message">
         <h2>Mappls credentials problem</h2>
         <p>
-          <code>backend/.env</code> mein <code>MAPPLS_CLIENT_ID</code> + <code>MAPPLS_CLIENT_SECRET</code> (ya <code>MAPPLS_KEY</code>) set karke backend restart karo.
+          Set <code>MAPPLS_KEY</code> in <code>backend/.env</code> and restart the backend.
         </p>
         {config?.authError && <p className="hint error">{config.authError}</p>}
       </div>
@@ -135,7 +149,7 @@ export default function MapView({ config, selected, origin, destination, route, 
 
   return (
     <div className="map-wrap">
-      <div ref={elRef} className="map" />
+      <div id={MAP_ID} ref={elRef} className="map" />
       {error && <div className="map-error">{error}</div>}
     </div>
   );

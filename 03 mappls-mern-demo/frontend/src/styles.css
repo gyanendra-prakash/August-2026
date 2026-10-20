@@ -13,14 +13,14 @@
 * { box-sizing: border-box; }
 html, body, #root { margin: 0; height: 100%; background: var(--bg); }
 
-.app { display: grid; grid-template-columns: 380px 1fr; height: 100%; }
+.app { display: grid; grid-template-columns: 380px 1fr; grid-template-rows: 100%; height: 100vh; }
 .sidebar { overflow-y: auto; padding: 16px; border-right: 1px solid var(--line); background: var(--bg); }
 .sidebar header h1 { margin: 0; font-size: 20px; }
 .sidebar header p { margin: 2px 0 12px; color: var(--muted); font-size: 13px; }
 
-.stage { position: relative; min-width: 0; }
+.stage { position: relative; min-width: 0; height: 100%; overflow: hidden; }
 .stage.picking .map { cursor: crosshair; }
-.map-wrap, .map { position: absolute; inset: 0; }
+.map-wrap, .map { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; }
 .map-error, .banner.error, .hint.error { color: var(--danger); }
 .map-error { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.15); z-index: 5; }
 .map-message { max-width: 520px; margin: 15vh auto; padding: 0 20px; text-align: center; }

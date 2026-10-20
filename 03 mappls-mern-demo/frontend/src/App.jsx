@@ -58,12 +58,11 @@ export default function App() {
 
   const flyTo = (p, zoom = 15) => setFocus({ lat: p.lat, lng: p.lng, zoom, t: Date.now() });
 
-  // Autosuggest item ke paas lat/lng na ho to geocode se nikalte hain
+  // Autosuggest results usually have no coordinates; the backend looks them up (Place Details / geocode)
   const resolveItem = async (item) => {
     if (item.lat != null && item.lng != null) return item;
-    const g = await api.geocode(`${item.name} ${item.address || ''}`.trim());
-    if (g.lat == null || g.lng == null) throw new Error('Is place ke coordinates nahi mile');
-    return { ...item, lat: g.lat, lng: g.lng, eLoc: item.eLoc || g.eLoc };
+    const r = await api.place(item);
+    return { ...item, lat: r.lat, lng: r.lng, eLoc: item.eLoc || r.eLoc };
   };
 
   const pickSelected = (item) =>
@@ -91,7 +90,7 @@ export default function App() {
       flyTo(p, 13);
     });
 
-  // Map click: pick mode ho to origin/destination, warna reverse geocode se address dikhao
+  // Map click: set origin/destination in pick mode, otherwise show the reverse-geocoded address
   const handleMapClick = async ({ lat, lng }) => {
     await run(async () => {
       let name = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
@@ -101,7 +100,7 @@ export default function App() {
         address = r.address;
         name = r.area || r.address || name;
       } catch {
-        /* reverse geocode fail ho to coordinates se kaam chalao */
+        /* if reverse geocoding fails, fall back to plain coordinates */
       }
       const p = { name, address, lat, lng, eLoc: null };
       if (pickMode === 'origin') {
@@ -163,10 +162,10 @@ export default function App() {
   if (fatal) {
     return (
       <div className="map-message">
-        <h2>Backend se connect nahi hua</h2>
+        <h2>Could not connect to the backend</h2>
         <p>{fatal}</p>
         <p>
-          <code>cd backend &amp;&amp; npm run dev</code> chalao, phir page refresh karo.
+          Run <code>cd backend &amp;&amp; npm run dev</code>, then refresh the page.
         </p>
       </div>
     );
@@ -231,7 +230,7 @@ export default function App() {
               <ul className="list compact">
                 {nearby.slice(0, 8).map((n, i) => (
                   <li key={`${n.eLoc || n.name}-${i}`}>
-                    <button className="link" onClick={() => n.lat != null && (setSelected(n), flyTo(n))}>
+                    <button className="link" onClick={() => run(async () => { const p = await resolveItem(n); setSelected(p); flyTo(p); })}>
                       <strong>{n.name}</strong>
                       <small>
                         {n.address}

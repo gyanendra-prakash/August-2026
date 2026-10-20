@@ -39,11 +39,11 @@ export default function RoutePanel({
 
       <label>Start</label>
       <div className="row">
-        <PlaceSearch placeholder="Start point search karo" center={center} value={origin?.name || ''} onPick={onPickOrigin} />
+        <PlaceSearch placeholder="Search start point" center={center} value={origin?.name || ''} onPick={onPickOrigin} />
         <button
           className={`ghost ${pickMode === 'origin' ? 'active' : ''}`}
           onClick={() => setPickMode(pickMode === 'origin' ? null : 'origin')}
-          title="Map pe click karke start chuno"
+          title="Click on the map to choose the start"
         >
           Map
         </button>
@@ -52,7 +52,7 @@ export default function RoutePanel({
       <label>Destination</label>
       <div className="row">
         <PlaceSearch
-          placeholder="Destination search karo"
+          placeholder="Search destination"
           center={center}
           value={destination?.name || ''}
           onPick={onPickDestination}
@@ -60,13 +60,13 @@ export default function RoutePanel({
         <button
           className={`ghost ${pickMode === 'destination' ? 'active' : ''}`}
           onClick={() => setPickMode(pickMode === 'destination' ? null : 'destination')}
-          title="Map pe click karke destination chuno"
+          title="Click on the map to choose the destination"
         >
           Map
         </button>
       </div>
 
-      {pickMode && <div className="hint">Ab map pe kahin bhi click karo ({pickMode === 'origin' ? 'start' : 'destination'} set hoga).</div>}
+      {pickMode && <div className="hint">Now click anywhere on the map to set the {pickMode === 'origin' ? 'start' : 'destination'}.</div>}
 
       <div className="chips">
         {PROFILES.map(([value, label]) => (

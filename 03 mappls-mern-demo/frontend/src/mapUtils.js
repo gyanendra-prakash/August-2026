@@ -1,32 +1,77 @@
-// Chhote helpers jo Mappls Web SDK (global `mappls`) ko wrap karte hain.
+// Small helpers that wrap the Mappls Web SDK (global `mappls`).
 
 let sdkPromise = null;
 
 export const getMappls = () => window.mappls || window.Mappls;
 
-/** Mappls Web SDK (v3.0) script ek hi baar load karta hai. */
+const SDK_URLS = (key) => {
+  const k = encodeURIComponent(key);
+  return [
+    // Current official loader
+    `https://sdk.mappls.com/map/sdk/web?v=3.0&access_token=${k}&layer=vector`,
+    // Legacy loader (fallback)
+    `https://apis.mappls.com/advancedmaps/api/${k}/map_sdk?v=3.0&layer=vector`,
+  ];
+};
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => {
+      s.remove();
+      reject(new Error('script load failed'));
+    };
+    document.head.appendChild(s);
+  });
+}
+
+// Even after the SDK script loads, `mappls.Map` can take a moment to become available
+function waitForSdk(timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const tick = () => {
+      const m = getMappls();
+      if (m && typeof m.Map === 'function') return resolve(m);
+      if (Date.now() - started > timeoutMs) return reject(new Error('SDK loaded but `mappls.Map` was not found'));
+      setTimeout(tick, 100);
+    };
+    tick();
+  });
+}
+
+/** Loads the Mappls Web SDK (v3.0) script once. */
 export function loadMapplsSdk(key) {
-  if (getMappls()) return Promise.resolve(getMappls());
+  const existing = getMappls();
+  if (existing && typeof existing.Map === 'function') return Promise.resolve(existing);
   if (sdkPromise) return sdkPromise;
 
-  sdkPromise = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = `https://apis.mappls.com/advancedmaps/api/${encodeURIComponent(key)}/map_sdk?v=3.0&layer=vector`;
-    s.async = true;
-    s.onload = () => (getMappls() ? resolve(getMappls()) : reject(new Error('SDK load hua par `mappls` global nahi mila')));
-    s.onerror = () => reject(new Error('Mappls SDK script load nahi hua. Static key, Maps SDK (Web) access, aur allowed domain check karo.'));
-    document.head.appendChild(s);
-  }).catch((e) => {
+  sdkPromise = (async () => {
+    let lastError = null;
+    for (const url of SDK_URLS(key)) {
+      try {
+        await loadScript(url);
+        return await waitForSdk();
+      } catch (e) {
+        lastError = e;
+      }
+    }
+    throw new Error(
+      `Mappls SDK failed to load (${lastError?.message}). Check the static key, Maps SDK (Web) access and allowed domain (localhost) in the Mappls Console.`
+    );
+  })().catch((e) => {
     sdkPromise = null; // retry allowed
     throw e;
   });
   return sdkPromise;
 }
 
-/** Map events: SDK versions mein `on` ya `addListener` hota hai. */
+/** Map events: depending on the SDK version the method is `on` or `addListener`. */
 export function onMapEvent(map, name, handler) {
-  if (typeof map.addListener === 'function') return map.addListener(name, handler);
   if (typeof map.on === 'function') return map.on(name, handler);
+  if (typeof map.addListener === 'function') return map.addListener(name, handler);
 }
 
 export const esc = (s) =>
@@ -46,7 +91,7 @@ export function addMarker(map, { lat, lng, color = '#e11d48', title = '', subtit
     return new mappls.Marker({
       map,
       position: { lat, lng },
-      icon: pinIcon(color),
+      icon_url: pinIcon(color),
       width: 30,
       height: 40,
       fitbounds: false,

@@ -13,7 +13,10 @@ export function errorMiddleware(err, req, res, _next) {
   if (err instanceof HttpError) {
     return res.status(err.status).json({ error: err.message });
   }
-  if (err?.name === 'ValidationError') {
+  if (err?.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'Request body is not valid JSON' });
+  }
+  if (err?.name === 'ValidationError' || err?.name === 'CastError') {
     return res.status(400).json({ error: err.message });
   }
   console.error('Unexpected error:', err);

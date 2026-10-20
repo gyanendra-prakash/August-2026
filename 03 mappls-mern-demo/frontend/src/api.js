@@ -11,7 +11,7 @@ async function request(path, { method = 'GET', body, signal } = {}) {
     });
   } catch (e) {
     if (e.name === 'AbortError') throw e;
-    throw new Error('Backend se connect nahi ho paya. Backend chal raha hai?');
+    throw new Error('Could not connect to the backend. Is it running?');
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
@@ -29,6 +29,7 @@ export const api = {
   // Mappls (backend proxy)
   autosuggest: async (q, center, signal) =>
     (await request(`/mappls/autosuggest?${qs({ q, lat: center?.lat, lng: center?.lng })}`, { signal })).results,
+  place: (item) => request(`/mappls/place?${qs({ eLoc: item.eLoc, name: item.name, address: item.address })}`),
   geocode: (address) => request(`/mappls/geocode?${qs({ address })}`),
   reverse: (lat, lng) => request(`/mappls/reverse?${qs({ lat, lng })}`),
   nearby: async (lat, lng, keywords) => (await request(`/mappls/nearby?${qs({ lat, lng, keywords })}`)).results,

@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Dev mein /api ki saari requests backend (port 5000) ko proxy hoti hain,
-// isliye frontend mein CORS ya hardcoded URL ki zaroorat nahi.
+// In dev, all /api requests are proxied to the backend (port 5000),
+// so the frontend needs no CORS setup or hardcoded URL.
 export default defineConfig({
   plugins: [react()],
   server: {

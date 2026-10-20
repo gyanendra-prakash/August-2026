@@ -8,18 +8,23 @@ export const config = {
   clientOrigin: env('CLIENT_ORIGIN', 'http://localhost:5173'),
   mongoUri: env('MONGODB_URI', 'mongodb://127.0.0.1:27017/mappls_demo'),
   mappls: {
-    key: mapplsKey,
+    key: mapplsKey, // Map SDK key (also used for REST unless MAPPLS_REST_KEY is set)
+    restKey: (process.env.MAPPLS_REST_KEY || '').trim().replace(/^['"]|['"]$/g, '').trim(),
+    referer: env('MAPPLS_REFERER', (process.env.CLIENT_ORIGIN || 'http://localhost:5173').split(',')[0].trim()),
     clientId: (process.env.MAPPLS_CLIENT_ID || '').trim(),
     clientSecret: (process.env.MAPPLS_CLIENT_SECRET || '').trim(),
     urls: {
       token: env('MAPPLS_TOKEN_URL', 'https://outpost.mappls.com/api/security/oauth/token'),
       autosuggest: env('MAPPLS_AUTOSUGGEST_URL', 'https://search.mappls.com/search/places/autosuggest/json'),
+      autosuggestLegacy: env('MAPPLS_AUTOSUGGEST_LEGACY_URL', 'https://atlas.mappls.com/api/places/search/json'),
       geocode: env('MAPPLS_GEOCODE_URL', 'https://search.mappls.com/search/address/geocode'),
       reverseGeocode: env('MAPPLS_REVERSE_GEOCODE_URL', 'https://search.mappls.com/search/address/rev-geocode'),
       nearby: env('MAPPLS_NEARBY_URL', 'https://search.mappls.com/search/places/nearby/json'),
+      placeDetails: env('MAPPLS_PLACE_DETAILS_URL', 'https://place.mappls.com/O2O/entity/place-details'),
       route: env('MAPPLS_ROUTE_URL', 'https://route.mappls.com/route/direction/route_adv'),
     },
   },
+  geocodeFallback: process.env.GEOCODE_FALLBACK !== 'off',
   // Default map view (New Delhi)
   defaultCenter: { lat: 28.6139, lng: 77.209 },
   defaultZoom: 11,

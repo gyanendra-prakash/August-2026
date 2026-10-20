@@ -1,9 +1,12 @@
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { config } from './src/config.js';
 import { errorMiddleware } from './src/errors.js';
-import { getAccessToken } from './src/services/mappls.js';
+import { getAccessToken, diagnose } from './src/services/mappls.js';
 import mapplsRoutes from './src/routes/mappls.js';
 import placesRoutes from './src/routes/places.js';
 
@@ -22,7 +25,10 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Frontend yahin se Mappls access token + default view leta hai.
+// Tests each Mappls credential separately and shows the raw result (no secrets).
+app.get('/api/diagnose', async (req, res) => res.json(await diagnose()));
+
+// The frontend gets the Mappls map key and the default view from here.
 app.get('/api/config', async (req, res) => {
   try {
     const { token } = await getAccessToken();
@@ -46,6 +52,14 @@ app.use('/api/mappls', mapplsRoutes);
 app.use('/api/places', placesRoutes);
 
 app.use('/api', (req, res) => res.status(404).json({ error: 'Route not found' }));
+
+// Production: after `npm run build`, frontend/dist is served by this same server.
+const distDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../frontend/dist');
+if (fs.existsSync(path.join(distDir, 'index.html'))) {
+  app.use(express.static(distDir));
+  app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')));
+}
+
 app.use(errorMiddleware);
 
 async function connectDb() {
@@ -53,15 +67,24 @@ async function connectDb() {
     await mongoose.connect(config.mongoUri, { serverSelectionTimeoutMS: 5000 });
     console.log('MongoDB connected');
   } catch (e) {
-    console.warn(`MongoDB connect nahi hua (${e.message}). 10s mein dubara try karenge; maps wale features chalte rahenge.`);
+    console.warn(`MongoDB connection failed (${e.message}). Retrying in 10s; map features keep working.`);
     setTimeout(connectDb, 10000);
   }
 }
 
-app.listen(config.port, () => {
+const server = app.listen(config.port, () => {
   console.log(`Backend running on http://localhost:${config.port}`);
   getAccessToken()
-    .then(({ mode }) => console.log(`Mappls auth OK (${mode})`))
+    .then(({ mode }) => console.log(`Mappls credentials found (${mode})`))
     .catch((e) => console.warn(`Mappls auth problem: ${e.message}`));
   connectDb();
+});
+
+server.on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.error(`Port ${config.port} is already in use. Stop the other backend or change PORT in backend/.env.`);
+  } else {
+    console.error('Server error:', e);
+  }
+  process.exit(1);
 });

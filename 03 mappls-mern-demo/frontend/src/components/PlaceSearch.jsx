@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../api.js';
 
-/** Mappls Autosuggest wala search box (backend ke through). */
+/** Search box backed by Mappls Autosuggest (called through our backend). */
 export default function PlaceSearch({ placeholder, center, onPick, value = '' }) {
   const [q, setQ] = useState(value);
   const [items, setItems] = useState([]);
@@ -10,7 +10,7 @@ export default function PlaceSearch({ placeholder, center, onPick, value = '' })
   const [error, setError] = useState('');
   const lastPicked = useRef(value);
 
-  // Parent se value badle (e.g. map click se origin set) to input sync karo
+  // Keep the input in sync when the parent changes the value (e.g. origin set by a map click)
   useEffect(() => {
     lastPicked.current = value;
     setQ(value);
