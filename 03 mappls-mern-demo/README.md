@@ -110,6 +110,7 @@ To run them separately: `cd backend && npm run dev` and `cd frontend && npm run 
 - **"Could not connect to the backend"**: is the backend running? Is port 5000 free?
 - **"MongoDB is not connected"**: run `docker compose up -d` or start a local `mongod`.
 
+
 ## Production build
 
 ```bash
