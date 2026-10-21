@@ -95,6 +95,7 @@ To run them separately: `cd backend && npm run dev` and `cd frontend && npm run 
 | POST | `/api/places` | Save a place (`name, address, eLoc, lat, lng, note`) |
 | DELETE | `/api/places/:id` | Delete a place |
 
+
 ## Notes
 
 - **Key security:** the Web SDK key is sent to the browser by design. In the Mappls Console restrict it to your domain / IP (`localhost` for dev). Never commit `.env`.
