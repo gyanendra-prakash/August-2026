@@ -101,6 +101,7 @@ To run them separately: `cd backend && npm run dev` and `cd frontend && npm run 
 - **Coordinates:** Mappls Autosuggest, Geocode and Nearby usually return an `eLoc` but no latitude/longitude. The backend gets coordinates from Place Details (premium), then Mappls Geocode, then OpenStreetMap. Disable the OpenStreetMap/OSRM fallbacks with `GEOCODE_FALLBACK=off`.
 - **Free plan limits:** Mappls plans have daily/hourly hit limits; a 403 can mean the limit was reached.
 
+
 ## Troubleshooting
 
 - **"Mappls access denied ... invalid_token"**: open http://localhost:5000/api/diagnose to see what Mappls returns for each credential. In the Mappls Console check that the API (Search / Geocode / Routing) is enabled for your key and the key is not restricted to another domain/IP. A free key often does not include Geocode, Place Details or Routing; the app falls back to free services for those.
